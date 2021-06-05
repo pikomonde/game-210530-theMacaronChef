@@ -6,15 +6,13 @@ type Solid struct {
 	IsSolid bool
 }
 
-func (obj *Solid) D() *gm.BehaviourData {
-	return &gm.BehaviourData{}
+func (bhvr *Solid) Init() {
 }
 
-func (obj *Solid) Init() {
+func (bhvr *Solid) Update() {
 }
 
-func (obj *Solid) Update() {
+func (bhvr *Solid) Draw(screen gm.Screen) {
 }
 
-func (obj *Solid) Draw(screen gm.Screen) {
-}
+// Behaviour specific method

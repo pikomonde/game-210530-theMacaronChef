@@ -8,46 +8,54 @@ type Object interface {
 	Init()
 	Update()
 	Draw(Screen)
-	D() *ObjectData
 }
 
-type ObjectData struct {
-	Objects    Objects
-	Behaviours Behaviours
+type objectData struct {
+	object     Object
+	behaviours behaviours
 }
 
-type Objects map[string][]Object
+type objects map[string]map[Object]objectData
 
 // Set an Instance to Game. It groups Instances based on Object type.
-func (objs Objects) Set(obj Object) {
+// What is actually stored is the pointer (interface) of the instance.
+func (objs objects) setObject(obj Object) {
 	objType := reflect.TypeOf(obj).String()
 	if _, ok := objs[objType]; !ok {
-		gm.Objects[objType] = make([]Object, 0)
+		objs[objType] = make(map[Object]objectData)
 	}
-	gm.Objects[objType] = append(gm.Objects[objType], obj)
+	objs[objType][obj] = objectData{
+		object:     obj,
+		behaviours: make(behaviours),
+	}
+}
+
+func (objs objects) getObjectData(obj Object) objectData {
+	objType := reflect.TypeOf(obj).String()
+	return objs[objType][obj]
 }
 
 // Update all Instances.
-func (objs Objects) Update() {
+func (objs objects) Update() {
 	for _, val := range objs {
-		for _, obj := range val {
-			obj.Update()
+		for _, objData := range val {
+			objData.object.Update()
 		}
 	}
 }
 
 // Draw all Instances.
-func (objs Objects) Draw(screen Screen) {
+func (objs objects) Draw(screen Screen) {
 	for _, val := range objs {
-		for _, obj := range val {
-			obj.Draw(screen)
+		for _, objData := range val {
+			objData.object.Draw(screen)
 		}
 	}
 }
 
 // Set an Instance to Game and initialize it.
 func SetObjectAndInit(obj Object) error {
-	gm.Objects.Set(obj)
+	gm.objects.setObject(obj)
 	obj.Init()
 	return nil
 }

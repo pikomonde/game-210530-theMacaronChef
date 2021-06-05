@@ -7,13 +7,10 @@ import (
 type Rule01 struct {
 }
 
-func (obj *Rule01) D() *gm.ObjectData {
-	return &gm.ObjectData{}
-}
-
 func (obj *Rule01) Init() {
 	gm.SetObjectAndInit(&Util{})
 	gm.SetObjectAndInit(&Snail{})
+	gm.SetObjectAndInit(&Tile{})
 }
 
 func (obj *Rule01) Update() {

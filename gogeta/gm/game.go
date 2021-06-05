@@ -11,12 +11,13 @@ import (
 var gm game
 
 type game struct {
-	Objects Objects
+	objects    objects
+	behaviours behaviourObjects
 }
 
 func (g *game) Update() error {
 	btn.Update()
-	g.Objects.Update()
+	g.objects.Update()
 	return nil
 }
 
@@ -25,7 +26,7 @@ func (g *game) Draw(screen *ebiten.Image) {
 	screen.Fill(color.NRGBA{0x00, 0x40, 0x80, 0xff})
 
 	// Draw object
-	g.Objects.Draw(Screen(screen))
+	g.objects.Draw(Screen(screen))
 }
 
 func (g *game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
@@ -33,7 +34,8 @@ func (g *game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 }
 
 func Init() error {
-	gm.Objects = make(map[string][]Object)
+	gm.objects = make(objects)
+	gm.behaviours = make(behaviourObjects)
 	ebiten.SetWindowSize(constant.WindowWidth, constant.WindowHeight)
 	return nil
 }

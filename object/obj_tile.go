@@ -16,10 +16,6 @@ type Tile struct {
 	Vel         r2.Point
 }
 
-func (obj *Tile) D() *gm.ObjectData {
-	return &gm.ObjectData{}
-}
-
 func (obj *Tile) Init() {
 	// Define sprite size
 	w, h := 16, 16

@@ -11,10 +11,6 @@ import (
 type Util struct {
 }
 
-func (obj *Util) D() *gm.ObjectData {
-	return &gm.ObjectData{}
-}
-
 func (obj *Util) Init() {
 }
 
