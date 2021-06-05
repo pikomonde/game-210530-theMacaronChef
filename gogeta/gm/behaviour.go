@@ -1,6 +1,8 @@
 package gm
 
 import (
+	"errors"
+	"log"
 	"reflect"
 )
 
@@ -50,19 +52,47 @@ func setBehaviour(obj Object, bhvr Behaviour) {
 }
 
 // Set a Behaviour to Object and initialize it.
-func SetBehaviourAndInit(obj Object, bhvr Behaviour) error {
-	setBehaviour(obj, bhvr)
-	bhvr.Init()
+func SetAndInitBehaviours(obj Object, bhvrArr ...Behaviour) {
+	for _, bhvr := range bhvrArr {
+		setBehaviour(obj, bhvr)
+	}
+	for _, bhvr := range bhvrArr {
+		bhvr.Init()
+	}
+}
+
+// Get Object's Behaviour by type.
+func GetBehaviour(obj Object, bhvrType Behaviour) (Behaviour, error) {
+	if bhvr := gm.objects.getObjectData(obj).behaviours.get(bhvrType); bhvr != nil {
+		return bhvr, nil
+	}
+	return nil, errors.New(ErrBehaviourNotFound)
+}
+
+// Get Object's Behaviour by type. Must return, panic if not found.
+func MustGetBehaviour(obj Object, bhvrType Behaviour) Behaviour {
+	if bhvr := gm.objects.getObjectData(obj).behaviours.get(bhvrType); bhvr != nil {
+		return bhvr
+	}
+	log.Fatalf("[GetBehaviour] Behaviour %T is not found in Object %T", bhvrType, obj)
 	return nil
 }
 
-// Get Object's Behaviour by type
-func GetBehaviour(obj Object, bhvrType Behaviour) Behaviour {
-	return gm.objects.getObjectData(obj).behaviours.get(bhvrType)
+// Get relative's Behaviour by type.
+func GetBehaviourRel(bhvrThis Behaviour, bhvrType Behaviour) (Behaviour, error) {
+	obj := GetObject(bhvrThis)
+	if bhvr := gm.objects.getObjectData(obj).behaviours.get(bhvrType); bhvr != nil {
+		return bhvr, nil
+	}
+	return nil, errors.New(ErrBehaviourNotFound)
 }
 
-// Get relative's Behaviour by type
-func GetBehaviourRel(bhvrThis Behaviour, bhvrType Behaviour) Behaviour {
+// Get relative's Behaviour by type. Must return, panic if not found.
+func MustGetBehaviourRel(bhvrThis Behaviour, bhvrType Behaviour) Behaviour {
 	obj := GetObject(bhvrThis)
-	return gm.objects.getObjectData(obj).behaviours.get(bhvrType)
+	if bhvr := gm.objects.getObjectData(obj).behaviours.get(bhvrType); bhvr != nil {
+		return bhvr
+	}
+	log.Fatalf("[GetBehaviourRel] Behaviour %T is not found. It is required by Behaviour %T in Object %T", bhvrType, bhvrThis, obj)
+	return nil
 }

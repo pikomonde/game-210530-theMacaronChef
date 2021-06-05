@@ -23,7 +23,7 @@ func (bhvr *Sprite) Update() {
 }
 
 func (bhvr *Sprite) Draw(screen gm.Screen) {
-	bhvrCommon := gm.GetBehaviourRel(bhvr, &Common{}).(*Common)
+	bhvrCommon := gm.MustGetBehaviourRel(bhvr, &Common{}).(*Common)
 
 	op := &ebiten.DrawImageOptions{}
 	op.GeoM.Translate(-bhvr.Anchor.X, -bhvr.Anchor.Y)

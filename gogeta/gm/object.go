@@ -54,8 +54,8 @@ func (objs objects) Draw(screen Screen) {
 }
 
 // Set an Instance to Game and initialize it.
-func SetObjectAndInit(obj Object) error {
+func SetAndInitObject(obj Object) Object {
 	gm.objects.setObject(obj)
 	obj.Init()
-	return nil
+	return obj
 }

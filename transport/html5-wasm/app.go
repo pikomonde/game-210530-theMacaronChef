@@ -13,7 +13,7 @@ import (
 func main() {
 	// Initialize objects
 	gm.Init()
-	gm.SetObjectAndInit(&object.Rule01{})
+	gm.SetAndInitObject(&object.Rule01{})
 	// gm.Game.SetObjectAndInit(&object.Colony{})
 
 	// Run game

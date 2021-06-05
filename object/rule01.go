@@ -8,15 +8,15 @@ type Rule01 struct {
 }
 
 func (obj *Rule01) Init() {
-	gm.SetObjectAndInit(&Util{})
-	gm.SetObjectAndInit(&Snail{})
-	gm.SetObjectAndInit(&Tile{})
+	gm.SetAndInitObject(&Util{})
+	gm.SetAndInitObject(&Snail{})
+	gm.SetAndInitObject(&Tile{})
 }
 
 func (obj *Rule01) Update() {
 	// if btn.IsMouseButtonClicked(ebiten.MouseButtonLeft) {
 	// 	x, y := ebiten.CursorPosition()
-	// 	gm.SetObjectAndInit(&Food{Pos: r2.Point{float64(x), float64(y)}})
+	// 	gm.SetAndInitObject(&Food{Pos: r2.Point{float64(x), float64(y)}})
 	// }
 }
 
