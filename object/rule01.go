@@ -9,8 +9,12 @@ type Rule01 struct {
 
 func (obj *Rule01) Init() {
 	gm.SetAndInitObject(&Util{})
-	gm.SetAndInitObject(&Snail{})
-	gm.SetAndInitObject(&Tile{})
+	gm.SetAndInitObject(&Snail{
+		// Common: behaviour.Common{
+		// 	Position: r2.Point{100, 100},
+		// },
+	})
+	// gm.SetAndInitObject(&Tile{})
 }
 
 func (obj *Rule01) Update() {

@@ -11,8 +11,8 @@ import (
 var gm game
 
 type game struct {
-	objects    objects
-	behaviours behaviourObjects
+	objects       objects          // all objects in the game, indexed by "object type" -> "object interface pointer"
+	parentObjects behaviourObjects // all objects in the game, indexed by "behvaiour interface pointer"
 }
 
 func (g *game) Update() error {
@@ -35,7 +35,7 @@ func (g *game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeigh
 
 func Init() error {
 	gm.objects = make(objects)
-	gm.behaviours = make(behaviourObjects)
+	gm.parentObjects = make(behaviourObjects)
 	ebiten.SetWindowSize(constant.WindowWidth, constant.WindowHeight)
 	return nil
 }
