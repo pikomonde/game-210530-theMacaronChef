@@ -1,6 +1,8 @@
 package gm
 
 import (
+	"errors"
+	"fmt"
 	"log"
 	"reflect"
 )
@@ -42,12 +44,57 @@ type Behaviour interface {
 // 	}
 // }
 
-func setBehaviour(obj Object, bhvr Behaviour) {
-	// // set behaviour to object's behaivour
-	// gm.objects.getObjectData(obj).behaviours.set(bhvr)
+func (objs objects) setBehaviour(obj Object, bhvr Behaviour) {
+	// no need to set behaviour to object's behaviour, because behaviour
+	// already set programatically
+	objd := objectData{object: obj}
+	bhvrType := reflect.TypeOf(bhvr).String()
 
-	// set behaviour to parentObject-behvaiour relation on top level game
-	gm.parentObjects.set(obj, bhvr)
+	// case: keyByBhvr (set behaviour to parentObject-behvaiour relation on
+	// top level game)
+	key := fmt.Sprintf("%s%p", keyByBhvr, bhvr)
+	if _, ok := gm.objects[key]; !ok {
+		gm.objects[key] = make(map[Object]objectData)
+	}
+	gm.objects[key][obj] = objd
+
+	// case: keyByBhvrType
+	key = fmt.Sprintf("%s%s", keyByBhvrType, bhvrType)
+	if _, ok := gm.objects[key]; !ok {
+		gm.objects[key] = make(map[Object]objectData)
+	}
+	gm.objects[key][obj] = objd
+}
+
+func (objs objects) delBehaviour(obj Object, bhvr Behaviour) {
+	bhvrType := reflect.TypeOf(bhvr).String()
+
+	// case: keyByBhvr (set behaviour to parentObject-behvaiour relation on
+	// top level game)
+	key := fmt.Sprintf("%s%p", keyByBhvr, bhvr)
+	delete(objs[key], obj)
+	delete(objs, key)
+
+	// case: keyByBhvrType
+	key = fmt.Sprintf("%s%s", keyByBhvrType, bhvrType)
+	delete(objs[key], obj)
+	if len(objs[key]) == 0 {
+		delete(objs, key)
+	}
+}
+
+func (objs objects) getParentObjectByBehaviour(bhvr Behaviour) (Object, error) {
+	key := fmt.Sprintf("%s%p", keyByBhvr, bhvr)
+	mapObj, ok := gm.objects[key]
+	if !ok {
+		return nil, errors.New(ErrParentObjectNotFound)
+	}
+	for _, objData := range mapObj {
+		return objData.object, nil
+	}
+	// there should be no case of this, because if there is no member of
+	// mapObj, gm.objects[key] should not be exist
+	return nil, errors.New(ErrParentObjectNotFound)
 }
 
 // // Set a Behaviour to Object and initialize it.
@@ -88,7 +135,7 @@ func setBehaviour(obj Object, bhvr Behaviour) {
 
 // Get relative's Behaviour by type. Must return, panic if not found.
 func MustGetBehaviourRel(bhvrThis Behaviour, bhvrType Behaviour) Behaviour {
-	obj := GetObject(bhvrThis)
+	obj, _ := gm.objects.getParentObjectByBehaviour(bhvrThis)
 	objReflectVal := reflect.Indirect(reflect.ValueOf(obj))
 
 	for i := 0; i < objReflectVal.NumField(); i++ {
@@ -106,7 +153,7 @@ func initBehaviours(obj Object) {
 
 	for i := 0; i < objReflectVal.NumField(); i++ {
 		if bhvr, ok := objReflectVal.Field(i).Addr().Interface().(Behaviour); ok {
-			setBehaviour(obj, bhvr)
+			gm.objects.setBehaviour(obj, bhvr)
 			bhvr.Init()
 		}
 	}

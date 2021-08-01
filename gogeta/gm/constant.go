@@ -1,5 +1,6 @@
 package gm
 
 const (
-	ErrBehaviourNotFound = "ErrBehaviourNotFound"
+	ErrBehaviourNotFound    = "ErrBehaviourNotFound"
+	ErrParentObjectNotFound = "ErrParentObjectNotFound"
 )
