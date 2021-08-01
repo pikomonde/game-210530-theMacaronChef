@@ -13,4 +13,5 @@ TO-DO List:
   - [ ] Common
     - [ ] Sprite
       - [ ] Z-Index
+    - [ ] Collision
   - [ ] Platformer

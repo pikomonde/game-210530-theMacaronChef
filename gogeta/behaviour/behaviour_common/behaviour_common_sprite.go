@@ -38,22 +38,31 @@ const (
 	DefaultAnimationName = "default"
 )
 
-// InsertFrameByImage insert frame(s) at the end of the animation named
+// InsertFrame insert frame(s) at the end of the animation named
 // "animationName" by Image. If "animationName" is empty, then it will use
 // default value.
-func (bhvr *Sprite) InsertFrameByImage(animationName string, image *ebiten.Image) *Frame {
-	// validation
+func (bhvr *Sprite) InsertFrame(animationName string, newFrames ...*Frame) {
+	// validation(s)
 	if animationName == "" {
 		animationName = DefaultAnimationName
 	}
 
-	newFrame := &Frame{Image: image}
-	newFrame.SetAnchorToggle(Sprite_FrameAnchor_ToggleDefault)
+	bhvr.Animations[animationName] = append(bhvr.Animations[animationName], newFrames...)
+}
 
-	bhvr.Animations[animationName] = append(bhvr.Animations[animationName], newFrame)
+// InsertFrameByImage insert frame(s) at the end of the animation named
+// "animationName" by Image. If "animationName" is empty, then it will use
+// default value.
+func (bhvr *Sprite) InsertFrameByImage(animationName string, images ...*ebiten.Image) {
+	newFrames := make([]*Frame, 0)
 
-	return newFrame
+	for _, image := range images {
+		newFrame := &Frame{Image: image}
+		newFrame.SetAnchorToggle(Sprite_FrameAnchor_ToggleDefault)
+		newFrames = append(newFrames, newFrame)
+	}
 
+	bhvr.InsertFrame(animationName, newFrames...)
 }
 
 // === Behaviour specific method:  ===
